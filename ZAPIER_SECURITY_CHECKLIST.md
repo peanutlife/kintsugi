@@ -1,18 +1,22 @@
-# Zapier Security Checklist
-## Self-Serve Security Audit for Your Zapier Workspace
+# 🔒 Zapier Security Checklist
+## Complete Security Audit for Your Zapier Workspace
 
 **⏱️ Time to complete:** 15-30 minutes
-**🎯 Goal:** Find and fix common security misconfigurations in your Zapier workflows
+**🎯 Goal:** Find and fix security misconfigurations in your Zapier workflows
+**🤖 Automated alternative:** Use the [Kintsugi Chrome Extension](https://github.com/peanutlife/kintsugi) to scan automatically
 
 ---
 
-## How to Use This Checklist
+## 📋 How to Use This Checklist
 
-1. **Open your Zapier dashboard** in one window
+1. **Open your Zapier dashboard** (`https://zapier.com/app/zaps`) in one window
 2. **Open this checklist** in another window
-3. **Go through each Zap** and check the items below
-4. **Mark issues** you find and fix them as you go
-5. **Share your results** (optional) - helps us build better tools!
+3. **Go through each section** systematically
+4. **Check each Zap** against the criteria below
+5. **Fix issues immediately** (critical ones first)
+6. **Document your findings** using the audit template at the bottom
+
+💡 **Tip:** Print this checklist or copy it to a Google Doc to track your progress
 
 ---
 
@@ -247,6 +251,280 @@
   2. Reconnect with minimum required permissions
   3. Update Zaps to use the new connection
   4. Test to ensure Zaps still work
+
+---
+
+### 🟠 HIGH: Code Injection & Execution Risks
+
+**Risk Level:** HIGH ⚠️
+**Impact:** Arbitrary code execution, data manipulation, system compromise
+
+#### What to Check:
+
+- [ ] **SQL Injection in database actions**
+
+  **Where to look:** Any Zap using database apps (MySQL, PostgreSQL, Airtable, etc.)
+
+  **Bad example:**
+  ```javascript
+  ❌ SELECT * FROM users WHERE email = '{{inputData.email}}'
+  ❌ DELETE FROM records WHERE id = {{zapier.input.id}}
+  ```
+
+  **Why it's bad:**
+  - User input directly in SQL queries
+  - Attacker can inject malicious SQL commands
+  - Could delete/modify all data
+
+  **How to fix:**
+  - Use parameterized queries
+  - Use built-in database actions (not raw SQL)
+  - Sanitize all input before use
+  - Example: Use Zapier's "Find/Create Row" actions instead
+
+---
+
+- [ ] **Command injection in Code steps**
+
+  **Where to look:** Code by Zapier steps using `exec`, `eval`, or system commands
+
+  **Bad example:**
+  ```javascript
+  ❌ const result = eval(inputData.formula);
+  ❌ const output = exec(`curl ${inputData.url}`);
+  ❌ const file = exec(`cat ${inputData.filename}`);
+  ```
+
+  **Why it's bad:**
+  - User-controlled input executed as code
+  - Can run ANY command on the system
+  - Complete system compromise possible
+
+  **How to fix:**
+  - Never use `eval()` with user input
+  - Never use `exec()` with user-controlled data
+  - Sanitize and validate ALL inputs
+  - Use safe alternatives (built-in functions, libraries)
+
+---
+
+- [ ] **Unsafe deserialization in Code steps**
+
+  **Where to look:** Code steps using `JSON.parse()`, `pickle.loads()`, etc.
+
+  **The problem:**
+  - Parsing untrusted data can execute code
+  - Especially dangerous in Python with pickle
+
+  **How to fix:**
+  - Only parse data from trusted sources
+  - Validate structure before parsing
+  - In Python: Use `json` not `pickle` for external data
+
+---
+
+### 🟡 MEDIUM: Data Leakage & Logging
+
+**Risk Level:** MEDIUM 📋
+**Impact:** Sensitive data exposure in logs, compliance violations
+
+#### What to Check:
+
+- [ ] **Sensitive data in Filter conditions**
+
+  **Where to look:** Open Zaps → Look at Filter steps
+
+  **The problem:**
+  - Filter conditions are logged in Zap history
+  - Example: "Only continue if Credit Card contains 4532"
+  - Now credit card fragment is in logs forever
+
+  **Bad example:**
+  ```
+  ❌ Filter: "Email contains @company.com"
+  ❌ Filter: "Password equals test123"
+  ❌ Filter: "SSN starts with 123"
+  ```
+
+  **How to fix:**
+  - Use generic filters when possible
+  - Filter on non-sensitive fields
+  - Example: Filter on "Status" or "Type" instead of PII
+
+---
+
+- [ ] **PII in error messages**
+
+  **Where to look:** Zap history → Failed Zaps → Error details
+
+  **The problem:**
+  - Errors often include the data that caused them
+  - Example: "Failed to process payment for card 4532-****-****-1234"
+  - Error logs are visible to all workspace members
+
+  **How to fix:**
+  - Review error handling in Code steps
+  - Redact sensitive data before logging
+  - Use generic error messages
+
+---
+
+- [ ] **Delay steps holding sensitive data**
+
+  **Where to look:** Zaps with "Delay by Zapier" steps
+
+  **What to check:**
+  - What data is being held during the delay?
+  - Is it PII, payment info, or credentials?
+  - How long is the delay?
+
+  **Why it matters:**
+  - Data is stored in Zapier's queue during delay
+  - Longer delay = longer exposure window
+  - If Zapier is compromised during delay, data is exposed
+
+  **How to fix:**
+  - Don't delay steps with sensitive data
+  - Or: Store only IDs during delay, fetch fresh data after
+  - Minimize delay duration
+
+---
+
+- [ ] **Public Zap sharing with secrets**
+
+  **Where to look:** Zap settings → Sharing → "Share Zap"
+
+  **The problem:**
+  - Sharing Zap as template can include:
+    - API keys in field values
+    - Webhook URLs
+    - Filter conditions with data
+    - Sample data from testing
+
+  **How to check:**
+  1. Open Zap settings
+  2. Check if "Shared" or "Template" is enabled
+  3. Review what's visible in the share
+
+  **How to fix:**
+  - Never share Zaps with real credentials
+  - Remove all test/sample data before sharing
+  - Use placeholder values only
+
+---
+
+### 🟡 MEDIUM: Input Validation & Data Handling
+
+**Risk Level:** MEDIUM 📋
+**Impact:** Data corruption, unexpected behavior, potential exploits
+
+#### What to Check:
+
+- [ ] **Missing input validation in webhooks**
+
+  **Where to look:** Catch Hook triggers receiving external data
+
+  **What to check:**
+  - Do you validate the data format?
+  - Do you check for required fields?
+  - Do you sanitize the input?
+
+  **Bad example:**
+  ```javascript
+  ❌ // Accepting webhook data directly with no validation
+  const email = inputData.email; // What if email is malicious?
+  const amount = inputData.amount; // What if amount is negative?
+  ```
+
+  **How to fix:**
+  - Add validation in first action step (Code or Filter)
+  - Check data types, formats, ranges
+  - Reject invalid data early
+  - Example validation:
+  ```javascript
+  ✅ if (!inputData.email || !inputData.email.includes('@')) {
+       throw new Error('Invalid email');
+     }
+  ✅ if (inputData.amount < 0 || inputData.amount > 10000) {
+       throw new Error('Invalid amount');
+     }
+  ```
+
+---
+
+- [ ] **File uploads without type validation**
+
+  **Where to look:** Zaps that handle file uploads (Google Drive, Dropbox, etc.)
+
+  **The problem:**
+  - Accepting any file type without checking
+  - Could upload malware, scripts, or huge files
+  - Could cause downstream processing issues
+
+  **How to fix:**
+  - Add Filter or Code step to check file extension
+  - Validate file size
+  - Only allow expected file types
+  - Example: Only allow `.pdf`, `.png`, `.jpg` files
+
+---
+
+- [ ] **Loop actions without limits**
+
+  **Where to look:** Zaps with "Looping by Zapier" or Code loops
+
+  **The problem:**
+  - Infinite loops can exhaust Zapier task limits
+  - Could cause DoS on connected services
+  - Unexpected costs from excessive API calls
+
+  **Bad example:**
+  ```javascript
+  ❌ while (true) { /* no exit condition */ }
+  ❌ for (let i = 0; i < inputData.count; i++) { /* no max limit */ }
+  ```
+
+  **How to fix:**
+  - Always set maximum iterations
+  - Add safety limits (e.g., max 100 loops)
+  - Monitor loop execution in Zap history
+  - Example:
+  ```javascript
+  ✅ const maxIterations = 100;
+  ✅ for (let i = 0; i < Math.min(inputData.count, maxIterations); i++) {
+       // safe loop
+     }
+  ```
+
+---
+
+- [ ] **Unvalidated URLs in actions**
+
+  **Where to look:** Any action using URLs from external sources
+
+  **The problem:**
+  - URL could point to internal services (SSRF attack)
+  - Could point to malicious sites
+  - Could be excessively long or malformed
+
+  **Bad example:**
+  ```javascript
+  ❌ fetch(inputData.callback_url) // Could be http://localhost/admin
+  ❌ window.open(inputData.redirect) // Could be javascript:alert(1)
+  ```
+
+  **How to fix:**
+  - Validate URL format and protocol
+  - Whitelist allowed domains only
+  - Block internal IP ranges
+  - Example:
+  ```javascript
+  ✅ const allowedDomains = ['api.myapp.com', 'webhook.site'];
+  ✅ const url = new URL(inputData.callback_url);
+  ✅ if (!allowedDomains.includes(url.hostname)) {
+       throw new Error('Invalid domain');
+     }
+  ```
 
 ---
 

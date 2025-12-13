@@ -1,0 +1,28 @@
+{
+  "manifest_version": 3,
+  "name": "Kintsugi Security Scanner",
+  "version": "1.0.0",
+  "description": "Find vulnerabilities in your Zapier workflows - comprehensive security scanning for no-code automation",
+  "permissions": [
+    "activeTab",
+    "storage",
+    "tabs",
+    "scripting"
+  ],
+  "host_permissions": [
+    "https://zapier.com/*"
+  ],
+  "action": {
+    "default_popup": "src/popup/popup.html"
+  },
+  "background": {
+    "service_worker": "src/background/background.js"
+  },
+  "content_scripts": [
+    {
+      "matches": ["https://zapier.com/*"],
+      "js": ["src/content/scanner.js"],
+      "run_at": "document_idle"
+    }
+  ]
+}
