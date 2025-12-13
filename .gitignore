@@ -40,3 +40,6 @@ COPY-PASTE-THIS.txt
 # Temporary files
 *.tmp
 *.temp
+
+# Internal planning docs (not for public repo)
+_internal/
