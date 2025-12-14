@@ -69,16 +69,6 @@ zapier-security-extension/
 └── README.md
 ```
 
-### Pricing Model
-
-**Option A: Free with Upsell**
-- Free: Basic scan (top 5 issues only)
-- $4.99 one-time: Unlimited scans + PDF reports
-
-**Option B: Completely Free**
-- Use as lead generation for API-based SaaS
-
-**Recommendation:** Start with Option B to build user base
 
 ### Distribution
 
