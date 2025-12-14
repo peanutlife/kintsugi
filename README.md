@@ -1,6 +1,28 @@
-# Kintsugi
+# Kintsugi 🎨
 
-**Security for no-code workflows** - Find the cracks in your Zapier automations and fix them beautifully.
+[![GitHub release](https://img.shields.io/github/v/release/peanutlife/kintsugi)](https://github.com/peanutlife/kintsugi/releases/latest)
+[![GitHub downloads](https://img.shields.io/github/downloads/peanutlife/kintsugi/total)](https://github.com/peanutlife/kintsugi/releases)
+[![GitHub stars](https://img.shields.io/github/stars/peanutlife/kintsugi)](https://github.com/peanutlife/kintsugi/stargazers)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+
+**Security for Zapier Workflows** - Find and fix security vulnerabilities automatically
+
+> Named after the Japanese art of repairing broken pottery with gold - find the cracks in your workflows and fix them properly.
+
+---
+
+## 📥 Download v1.0.0 - Now Available!
+
+🎉 **NEW:** Automated Chrome Extension Scanner!
+
+**[Download Latest Release](https://github.com/peanutlife/kintsugi/releases/latest)** → `kintsugi-extension-v1.0.0.zip`
+
+Scan your entire Zapier workspace in 30-60 seconds and find:
+- 🔴 **CRITICAL:** Hardcoded API keys, Command injection
+- 🟠 **HIGH:** Insecure webhooks
+- 🟡 **MEDIUM:** PII in Zap names
+
+**Install in 5 minutes** → [Installation Guide](kintsugi-extension/INSTALLATION.md)
 
 ---
 
@@ -8,11 +30,18 @@
 
 Kintsugi (金継ぎ) is the Japanese art of repairing broken pottery with gold. Instead of hiding the cracks, they're highlighted with gold lacquer, making the piece more beautiful and valuable for having been broken.
 
-**Our mission:** Find vulnerabilities in your no-code workflows, help you fix them, and make your automations stronger.
+**Our mission:** Find vulnerabilities in your Zapier workflows automatically, provide detailed fixes, and make your automations stronger.
 
 ---
 
-## 🔍 Free Security Checklist
+## 🔍 Choose Your Approach
+
+### 🤖 Automated Scanner (Chrome Extension)
+**Best for:** Quick comprehensive scan with detailed findings
+**Time:** 30-60 seconds
+**[Download Extension](https://github.com/peanutlife/kintsugi/releases/latest)** | [Installation Guide](kintsugi-extension/INSTALLATION.md)
+
+### 📋 Manual Security Checklist
 
 **Comprehensive self-serve security audit for Zapier workflows**
 
@@ -81,21 +110,29 @@ This API key was:
 
 ## 🚀 Roadmap
 
-### ✅ Phase 1: Self-Serve Checklist (Available Now)
-Free comprehensive security checklist you can use to audit your Zapier workspace manually.
+### ✅ Phase 1: Self-Serve Checklist (✓ Complete)
+Free comprehensive security checklist for manual Zapier workspace audits.
 
-### 🚧 Phase 2: Automated Scanner (Coming in 3-4 weeks)
-Automated tool that scans your entire workspace in 30 seconds using the Zapier API.
+### ✅ Phase 2: Automated Scanner (✓ Released v1.0.0)
+Chrome extension that scans your entire workspace in 30-60 seconds.
 
 **Features:**
-- Full workspace scanning via API
-- Detects all security issues automatically
-- Detailed remediation steps
-- Historical tracking
+- ✅ Deep scanning via DOM scraping
+- ✅ Detects critical, high, and medium issues
+- ✅ Detailed step-by-step remediation guides
+- ✅ Export reports
+- ✅ 100% local (no external servers)
 
-**[Join the waitlist →](#)** _(Coming soon)_
+**[Download Now →](https://github.com/peanutlife/kintsugi/releases/latest)**
 
-### 🔮 Phase 3: Multi-Platform Support
+### 🚧 Phase 3: Enhanced Detections (v1.1+)
+- SQL injection in database actions
+- Missing input validation
+- Sensitive data in filters
+- Loop actions without limits
+- And more...
+
+### 🔮 Phase 4: Multi-Platform Support
 Expand to Make.com, n8n, Power Automate, and other no-code platforms.
 
 ---
