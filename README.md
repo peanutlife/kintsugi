@@ -139,10 +139,11 @@ Expand to Make.com, n8n, Power Automate, and other no-code platforms.
 
 ## 📖 Documentation
 
-- **[Security Checklist](ZAPIER_SECURITY_CHECKLIST.md)** - Complete self-serve audit guide
-- **[Reddit Launch Guide](REDDIT_POST_CHECKLIST.md)** - How we're launching this
-- **[Launch Playbook](LAUNCH_TODAY.md)** - Behind the scenes
-- **[Roadmap](ROADMAP.md)** - Detailed future plans
+- **[Quick Start Guide](QUICK_START.md)** - Choose automated or manual approach
+- **[Installation Guide](kintsugi-extension/INSTALLATION.md)** - Chrome extension setup
+- **[Security Checklist](ZAPIER_SECURITY_CHECKLIST.md)** - Complete manual audit guide
+- **[Test Zaps Guide](TEST_ZAPS_GUIDE.md)** - Create vulnerable Zaps for testing
+- **[Roadmap](ROADMAP.md)** - Future features and plans
 
 ---
 
